@@ -17,7 +17,7 @@ CXX           = g++
 LD            = g++
 LDFLAGS       = 
 
-LIBS          = $(ROOTLIBS) -L$(LHAPDF)/lib -lLHAPDF
+LIBS          = $(ROOTLIBS) $(shell lhapdf-config --libs)
 GLIBS         = $(ROOTGLIBS) -L/usr/X11R6/lib -lXpm -lX11
 
 ALL_LIBS =  $(GLIBS) $(LIBS)

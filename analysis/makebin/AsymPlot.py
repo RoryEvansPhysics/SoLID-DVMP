@@ -72,7 +72,7 @@ W = np.zeros(N, dtype=float)
 dilute = np.zeros(N, dtype=float)
 
 filename = './results/%s_dvmp_par_%s_%s.dat'%(bin_type, data_type, fit_type)
-print '-- Reading files from %s'%filename
+print('-- Reading files from %s'%filename)
 lines = open(filename,'r').readlines()
 
 for i in range(0, N):
@@ -223,7 +223,7 @@ GOOD_cal = np.zeros(Bin, dtype=float)
 
 for i in range(0,7):
     filename = './database/BIN_%s_dvmp_par_%s_%s_%d_0.dat'%(bin_type, data_type, fit_type, i+1)
-    print '-- Reading files from %s'%filename
+    print ('-- Reading files from %s'%filename)
     lines = open(filename,'r').readlines()
 
     for j in range(0, N1):

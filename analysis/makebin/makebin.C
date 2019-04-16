@@ -88,7 +88,7 @@ Int_t main()
     if(bin_type==3) {BINS= 10;}
 
     ifstream inputf; 
-    inputf.open(Form("../asym_extr/results_may9/%s_dvmp_par_%s_%s.dat",bin_name.Data(), type_name.Data(), fit_pars.Data()));
+    inputf.open(Form("../asym_extr/%s_dvmp_par_%s_%s.dat",bin_name.Data(), type_name.Data(), fit_pars.Data()));
     TString com;
     double temp;
     int t_bin, Q2_bin;

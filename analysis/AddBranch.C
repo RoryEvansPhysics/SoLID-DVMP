@@ -42,6 +42,7 @@
 #include <TMath.h>
 #include <TPaletteAxis.h>
 #include <TRandom3.h>
+#include <stdio.h>
 //#include <TMatrix.h>
 /*}}}*/
 
@@ -133,7 +134,19 @@ int AddBranch(){
     }
     */
 
-    cout << "Enter File name: "; cin>>filename;
+    //cout << "Enter File name: "; cin>>filename;
+    if (CASE==1){
+      if (target_direction==1) filename = "rootfiles/NoEffectsNeg10M.root";
+      if (target_direction==2) filename = "rootfiles/NoEffectsPos10M.root";
+    }
+    if (CASE==2){
+      if (target_direction==1) filename = "rootfiles/ElossMSNeg10M.root";
+      if (target_direction==2) filename = "rootfiles/ElossMSPos10M.root";
+    }
+    if (CASE==3){
+      if (target_direction==1) filename = "rootfiles/NoEffectsNeg10M.root";
+      if (target_direction==2) filename = "rootfiles/NoEffectsPos10M.root";
+    }
     t1->Add(filename.Data());
 
     int N_entries = t1->GetEntries();
@@ -642,6 +655,18 @@ int AddBranch(){
     double total_rate_dvmp_4GeV=0.0; //Make sure the value is right
     for(Long64_t i=0;i<N_entries;i++){
         t1->GetEntry(i);
+
+        /*
+          Sign corrections for t, t_para.
+          New event generator uses physics def. for t and is always negative in output.
+          Old generator had t defined as negative t.
+         */
+        t = -t;
+        t_Para = -t_Para;
+        t_cor = -t_cor;
+        
+
+
         //if(ele_theta>7.5&&ele_theta<24.5&&ele_mom>1.&&ele_mom<11
         //&&pim_theta>7.5&&pim_theta<24.5&&pim_mom>1.&&pim_mom<11
         //&& W>=2.&&Qsq>1.0&&SigmaPara>1e-33){//any additional cuts should be added in here

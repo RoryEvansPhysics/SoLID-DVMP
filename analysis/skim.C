@@ -2852,6 +2852,8 @@ Int_t makebin(){
     for(Long64_t i=0;i<N_entries;i++){
         t0->GetEntry(i);
         if(Epsilon>0.55&&Epsilon<0.75&&W>2&&Qsq_cor>4){
+
+          //          cout << "test" << endl;
             tp = t - t_Para;
             tp_cor = t_cor - t_Para;
             if(bmode==1){
@@ -2872,6 +2874,7 @@ Int_t makebin(){
                 double Q2Cut = tppar[0]+tppar[1]*tp + tppar[2]*tp*tp;
                 if(Qsq_cor<=Q2Cut) Q2BIN = 1;
                 if(Qsq_cor>Q2Cut) Q2BIN = 2;
+
 
                 if( tp>tp_cut[0] && tp<tp_cut[1])    t1->Fill();
                 if( tp>tp_cut[1] && tp<tp_cut[2])    t2->Fill();
