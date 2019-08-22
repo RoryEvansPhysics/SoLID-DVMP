@@ -70,12 +70,13 @@ Int_t makebin(){
 
        TString type_name = "";
     Int_t type=0;
-    cout<<"--- type = (1->simple, 2->mult, 3->mult_fsi, 4->fermi, 5->mult-fermi)"; cin>>type;
+    cout<<"--- type = (1->simple, 2->eloss, 3->ms, 4->fermi, 5->elossmsfermi, 6->fsi)"; cin>>type;
     if(type==1) type_name ="simple";
-    if(type==2) type_name ="mult";
-    if(type==3) type_name ="mult_fsi";
+    if(type==2) type_name ="eloss";
+    if(type==3) type_name ="ms";
     if(type==4) type_name ="fermi";
-    if(type==5) type_name ="mult_nofermi";
+    if(type==5) type_name ="elossmsfermi";
+    if(type==6) type_name ="fsi";
 
     TString pol_name="";
     int pol=0;
@@ -85,8 +86,8 @@ Int_t makebin(){
 
     TString bin_name="";
     int bmode=0;
-    //cout<<"--- Bin-Mode = (1->t, 2->tp) "; cin >> bmode;
-    bmode=2;
+    cout<<"--- Bin-Mode = (1->t, 2->tp) "; cin >> bmode;
+    //bmode=2;
     if(bmode==1) bin_name="t";
     if(bmode==2) bin_name="tp";
 
@@ -2841,8 +2842,8 @@ Int_t makebin(){
     t11->Branch("Q2BIN", &Q2BIN, "Q2BIN/I");
     /*}}}*/
     
-    const Int_t tbin = 8;
-    const Double_t t_cut[tbin+1] = {0.00, 0.30, 0.40, 0.50, 0.60, 0.80, 1.10, 2.0};
+    const Int_t tbin = 7;
+    const Double_t t_cut[tbin+1] = {0.05, 0.20, 0.30, 0.40, 0.50, 0.70, 1.0, 3.0};
     const Double_t tpar[4] = {6.293, 6.989, -3.174, 0.4937}; //for Q2 cut
     
     const Int_t tpbin = 11;
@@ -2868,7 +2869,7 @@ Int_t makebin(){
                 if( t>t_cut[4] && t<t_cut[5])  t5->Fill();
                 if( t>t_cut[5] && t<t_cut[6])  t6->Fill();
                 if( t>t_cut[6] && t<t_cut[7])  t7->Fill();
-                if( t>t_cut[7] && t<t_cut[8])  t8->Fill();
+                //if( t>t_cut[7] && t<t_cut[8])  t8->Fill();
             }
             else if(bmode==2){
                 double Q2Cut = tppar[0]+tppar[1]*tp + tppar[2]*tp*tp;

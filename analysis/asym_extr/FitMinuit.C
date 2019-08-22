@@ -22,12 +22,14 @@ Int_t main()
     gStyle->SetOptStat(0);
     
     Int_t iType = 0;
-    cout<<"--- Which file ? (1->simple, 2->mult, 3->mult_fsi, 4->fermi, 5->mult_nofermi)  "; cin >> iType;
+    cout<<"--- Which file ? (1->simple, 2->eloss, 3->ms, 4->fermi, 5->elossmsfermi  "; cin >> iType;
     if(iType==1) type_name = "simple"; 
-    if(iType==2) type_name = "mult"; 
-    if(iType==3) type_name = "mult_fsi"; 
+    if(iType==2) type_name = "eloss"; 
+    if(iType==3) type_name = "ms"; 
     if(iType==4) type_name = "fermi"; 
-    if(iType==5) type_name = "mult_nofermi"; 
+    if(iType==5) type_name = "elossmsfermi";
+    if(iType==6) type_name ="lowstat";
+
 
     Int_t IT = 0, IQ = 0;
 
@@ -37,7 +39,7 @@ Int_t main()
     if(bin_type==2) bin_name ="tp";
 
     int BINS = 0;
-    if(bin_type==1){ cout<<"--- Which t-bin? (1--8, 0 for all)  "; cin >> IT;  BINS= 8;}
+    if(bin_type==1){ cout<<"--- Which t-bin? (1--7, 0 for all)  "; cin >> IT;  BINS= 7;}
     if(bin_type==2){ cout<<"--- Which tp-bin? (1--11, 0 for all)  "; cin >> IT;  BINS= 11;}
 
     if(IT==0){
@@ -148,17 +150,18 @@ void DoMinuit(double *par, Int_t IT, Int_t IQ, Int_t SAVE)
 	//Set Name of Parameters
 	TString namePar[iParaNum]={"norm", "a1m1","a0p1","a2m1","a3m1","a1p1"};
 	
-        //Set Initial Values of Parameters
-        Double_t inPar[iParaNum]={par[0],par[1],par[2],par[3],par[4],par[5]};   
+  //Set Initial Values of Parameters
+  Double_t inPar[iParaNum]={par[0],par[1],par[2],par[3],par[4],par[5]};   
 
 	//Set Stepsize of Parameters
 	Double_t step[iParaNum]={1.0e-5,1.0e-5,1.0e-5,1.0e-5,1.0e-5,1.0e-5};
 
 	//Set Min of Parameters, value==0 for No-Bound
-	Double_t minVal[iParaNum]={0,0,0,0,0,0};
-
+	//Double_t minVal[iParaNum]={0,-0.15,0.2,-0.07,-0.012,1.0e-12};
+  Double_t minVal[iParaNum]={0,0,0,0,0,0};
 	//Set Max of Parameters, value==0 for No-Bound
-	Double_t maxVal[iParaNum]={0,0,0,0,0,0};
+	//Double_t maxVal[iParaNum]={0,-1.0e-12,0.5,-1.0e-12,-1.0e-12,0.08};
+  Double_t maxVal[iParaNum]={0,0,0,0,0,0};
 
 	//Initializing Parameters
 	for(int ii=0;ii<iParaNum;ii++){
@@ -321,6 +324,8 @@ void LoadData( Int_t IT=0, Int_t IQ=0){
    Double_t weight_sum_up = 0;
    for(int i=0;i<Nu; i++){
      Tu->GetEntry(i);
+     if(weight == 0)
+       //continue;
      if(Q2BIN!=IQ && IQ!=0) continue; //choose the right Q2 bin
 
      //last chance to apply whatever cuts here
@@ -329,7 +334,7 @@ void LoadData( Int_t IT=0, Int_t IQ=0){
      tp = t - t_Para;
      phi_h *= Deg2Rad;
      phi_s *= Deg2Rad;
-     Photon_Factor = 1.0;
+     Photon_Factor = -1.0;
      
      if(isnan(weight_uu) || isinf(weight_uu)) weight_uu=0.0;
      if(weight_uu<1e-12 && weight_uu>1e12) weight_uu=0.0;
@@ -362,12 +367,26 @@ void LoadData( Int_t IT=0, Int_t IQ=0){
      asym_3m1_avg += asym_3m1 * weight_uu;
      asym_1p1_avg += asym_1p1 * weight_uu;
 
+     // asym_1m1_avg += asym_1m1 * weight;
+     // asym_0p1_avg += asym_0p1 * weight;
+     // asym_2m1_avg += asym_2m1 * weight;
+     // asym_3m1_avg += asym_3m1 * weight;
+     // asym_1p1_avg += asym_1p1 * weight;
+
      t_avg += t * weight_uu;
      tp_avg += tp * weight_uu;
      W_avg += W * weight_uu;
      xb_avg += xb * weight_uu;
      Q2_avg += Q2 * weight_uu;
      dilute_avg += dilute * weight_uu;
+
+
+     // t_avg += t * weight;
+     // tp_avg += tp * weight;
+     // W_avg += W * weight;
+     // xb_avg += xb * weight;
+     // Q2_avg += Q2 * weight;
+     // dilute_avg += dilute * weight;
 
      weight_sum_up += weight;
  }
@@ -411,14 +430,18 @@ void LoadData( Int_t IT=0, Int_t IQ=0){
    Double_t weight_sum_down = 0;
    for(int i=0;i<Nd; i++){
      Td->GetEntry(i);
+     if(weight == 0)
+       //continue;
      if(Q2BIN!=IQ && IQ!=0) continue; //choose the right Q2 bin
      //last chance to apply whatever cuts here
      if(MP_res>1.2) continue;
      tp = t - t_Para;
+
+     //cout << "a1m1:"<<asym_1m1<<endl;
     
      //Note: In the generator Ahmed switch the sign of the polarization. 
      //In this fit, I fix the absolute polarization values, and rotate the phi_S
-     phi_s += 180.0;
+     //phi_s += 180.0;
      phi_h *= Deg2Rad;
      phi_s *= Deg2Rad;
      Photon_Factor = 1.0;
@@ -447,12 +470,18 @@ void LoadData( Int_t IT=0, Int_t IQ=0){
      vPhiS_D.push_back(phi_s);
      vFactor_D.push_back(Photon_Factor);
      vWeight_D.push_back(weight);
-   
+
      asym_1m1_avg += asym_1m1 * weight_uu;
      asym_0p1_avg += asym_0p1 * weight_uu;
      asym_2m1_avg += asym_2m1 * weight_uu;
      asym_3m1_avg += asym_3m1 * weight_uu;
      asym_1p1_avg += asym_1p1 * weight_uu;
+
+     // asym_1m1_avg += asym_1m1 * weight;
+     // asym_0p1_avg += asym_0p1 * weight;
+     // asym_2m1_avg += asym_2m1 * weight;
+     // asym_3m1_avg += asym_3m1 * weight;
+     // asym_1p1_avg += asym_1p1 * weight;
 
      t_avg += t * weight_uu;
      tp_avg += tp * weight_uu;
@@ -460,6 +489,13 @@ void LoadData( Int_t IT=0, Int_t IQ=0){
      xb_avg += xb * weight_uu;
      Q2_avg += Q2 * weight_uu;
      dilute_avg += dilute * weight_uu;
+
+     // t_avg += t * weight;
+     // tp_avg += tp * weight;
+     // W_avg += W * weight;
+     // xb_avg += xb * weight;
+     // Q2_avg += Q2 * weight;
+     // dilute_avg += dilute * weight;
 
      weight_sum_down += weight;
 }

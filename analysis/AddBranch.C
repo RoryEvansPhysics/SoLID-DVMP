@@ -71,7 +71,7 @@ TLorentzVector* GetMV(TLorentzVector* P_t,TLorentzVector* P_E0, TLorentzVector* 
 
 /*}}}*/
 
-int AddBranch(){
+int main(){
     //int main(){
     gStyle->SetOptStat(0);
     //const double Lumi = 1.0e36; // cm-2*s-1, for He3 nuclear not for nucleons
@@ -81,8 +81,9 @@ int AddBranch(){
     const TString particle="pim";
     double EBeam = 11.0;
     double time = 48 * 24 * 3600.0;
+    //double time = 1;
     
-    Int_t CASE = 0; cout<<"--- What Configuration (1->NONE, 2->EL+MS, 3->EL+MS+FSI, 4->Fermi, 5->EL+MS-Fermi)? "; cin>>CASE;/*{{{*/
+    Int_t CASE = 0; cout<<"--- What Configuration (1->NONE, 2->ELoss, 3->MS, 4->Fermi, 5->EL+MS+Fermi, 6->FSI, 7->IonOnly, 8->BremsOnly)? "; cin>>CASE;/*{{{*/
 
     Int_t target_direction=1; 
     cout<<"--- Target Direction (1->Up, 2->Down): "; cin>>target_direction;
@@ -136,16 +137,36 @@ int AddBranch(){
 
     //cout << "Enter File name: "; cin>>filename;
     if (CASE==1){
-      if (target_direction==1) filename = "rootfiles/NoEffectsNeg10M.root";
-      if (target_direction==2) filename = "rootfiles/NoEffectsPos10M.root";
+      if (target_direction==1) filename = "rootfiles/SimpleUp.root";
+      if (target_direction==2) filename = "rootfiles/SimpleDown.root";
     }
     if (CASE==2){
-      if (target_direction==1) filename = "rootfiles/ElossMSNeg10M.root";
-      if (target_direction==2) filename = "rootfiles/ElossMSPos10M.root";
+      if (target_direction==1) filename = "rootfiles/ElossUp.root";
+      if (target_direction==2) filename = "rootfiles/ElossDown.root";
     }
     if (CASE==3){
-      if (target_direction==1) filename = "rootfiles/NoEffectsNeg10M.root";
-      if (target_direction==2) filename = "rootfiles/NoEffectsPos10M.root";
+      if (target_direction==1) filename = "rootfiles/MSUp.root";
+      if (target_direction==2) filename = "rootfiles/MSDown.root";
+    }
+    if (CASE==4){
+      if (target_direction==1) filename = "rootfiles/FermiUp.root";
+      if (target_direction==2) filename = "rootfiles/FermiDown.root";
+    }
+    if (CASE==5){
+      if (target_direction==1) filename = "rootfiles/MSElossFermiUp.root";
+      if (target_direction==2) filename = "rootfiles/MSElossFermiDown.root";
+    }
+    if (CASE==6){
+      if (target_direction==1) filename = "rootfiles/FSIFermiUp.root";
+      if (target_direction==2) filename = "rootfiles/FSIFermiDown.root";
+    }
+    if (CASE==7){
+      if (target_direction==1) filename = "rootfiles/IonUp.root";
+      if (target_direction==2) filename = "rootfiles/IonDown.root";
+    }
+    if (CASE==8){
+      if (target_direction==1) filename = "rootfiles/BremsUp.root";
+      if (target_direction==2) filename = "rootfiles/BremsDown.root";
     }
     t1->Add(filename.Data());
 
@@ -345,10 +366,13 @@ int AddBranch(){
     /*}}}*/
 
     if(CASE==1) new_filename = Form("./rootfiles/DEMP_%s_simple.root", targetname.Data());
-    if(CASE==2) new_filename = Form("./rootfiles/DEMP_%s_mult.root", targetname.Data());
-    if(CASE==3) new_filename = Form("./rootfiles/DEMP_%s_mult_fsi.root", targetname.Data());
+    if(CASE==2) new_filename = Form("./rootfiles/DEMP_%s_eloss.root", targetname.Data());
+    if(CASE==3) new_filename = Form("./rootfiles/DEMP_%s_ms.root", targetname.Data());
     if(CASE==4) new_filename = Form("./rootfiles/DEMP_%s_fermi.root", targetname.Data());
-    if(CASE==5) new_filename = Form("./rootfiles/DEMP_%s_mult_nofermi.root", targetname.Data());
+    if(CASE==5) new_filename = Form("./rootfiles/DEMP_%s_elossmsfermi.root", targetname.Data());
+    if(CASE==6) new_filename = Form("./rootfiles/DEMP_%s_fsi.root", targetname.Data());
+    if(CASE==7) new_filename = Form("./rootfiles/DEMP_%s_ion.root", targetname.Data());
+    if(CASE==8) new_filename = Form("./rootfiles/DEMP_%s_brems.root", targetname.Data());
     cout<<"---  Saving in file = "<<new_filename.Data()<<endl;
     TFile* f2=new TFile(new_filename.Data(),"recreate"); 
    
@@ -378,8 +402,7 @@ int AddBranch(){
 
     t2->Branch("Qsq_cor", &Qsq_cor ,"Qsq_cor/D");
     t2->Branch("t_cor", &t_cor ,"t_cor/D");
-    t2->Branch("tp_cor", &tp_cor ,"tp_cor/D");
-    t2->Branch("W_cor", &W_cor ,"W_cor/D");
+    t2->Branch("tp_cor", &tp_cor ,"tp_cor/D");    t2->Branch("W_cor", &W_cor ,"W_cor/D");
     t2->Branch("x_cor", &x_cor ,"x_cor/D");
     t2->Branch("y_cor", &y_cor ,"y_cor/D");
     t2->Branch("z_cor", &z_cor ,"z_cor/D"); 
@@ -664,6 +687,8 @@ int AddBranch(){
         t = -t;
         t_Para = -t_Para;
         t_cor = -t_cor;
+
+        if (pro_mom_cor==0) continue;
         
 
 

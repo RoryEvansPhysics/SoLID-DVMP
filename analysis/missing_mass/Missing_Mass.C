@@ -62,12 +62,13 @@ int main(){
 
     TString type_name = "";/*{{{*/
     Int_t type=0;
-    cout<<"--- type = (1->simple, 2->mult, 3->mult_fsi, 4->fermi, 5->mult-fermi)"; cin>>type;
+    cout<<"--- type = (1->simple, 2->eloss, 3->ms, 4->fermi, 5->mult-, 6->fsi)"; cin>>type;
     if(type==1) type_name ="simple";
-    if(type==2) type_name ="mult";
-    if(type==3) type_name ="mult_fsi";
+    if(type==2) type_name ="eloss";
+    if(type==3) type_name ="ms";
     if(type==4) type_name ="fermi";
-    if(type==5) type_name ="mult_nofermi";
+    if(type==5) type_name ="elossmsfermi";
+    if(type==6) type_name ="fsi";
 
     TString pol_name="";
     int pol=0;
